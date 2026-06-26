@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eight & Bob · US Business Case</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#16181D; --ink2:#1E2128; --ink3:#272B34;
+  --brass:#9C7A3C; --brass-lite:#C9A867; --brass-glow:rgba(156,122,60,.18);
+  --cream:#EDE6D6; --cream-dim:#A9A597; --cream-faint:#6E6C64;
+  --green:#7FА88A; --green:#7FA88A; --rose:#C77B6B;
+  --line:rgba(237,230,214,.12);
+  --serif:'Fraunces','Hoefler Text','Playfair Display',Georgia,'Times New Roman',serif;
+  --sans:'Inter','Helvetica Neue',system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--ink);color:var(--cream);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;
+}
+/* ---------- deck mechanics ---------- */
+.deck{position:fixed;inset:0}
+.slide{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  justify-content:center;padding:6vh 8vw;
+  opacity:0;visibility:hidden;transform:translateY(14px);
+  transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1),visibility .7s;
+  overflow:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.slide.prev{transform:translateY(-14px)}
+
+/* ambient brass haze */
+.slide::before{
+  content:"";position:absolute;width:60vw;height:60vw;border-radius:50%;
+  top:-25vw;right:-20vw;pointer-events:none;
+  background:radial-gradient(circle,var(--brass-glow),transparent 65%);
+  opacity:0;transition:opacity 1.2s ease .2s;
+}
+.slide.active::before{opacity:1}
+
+/* ---------- type ---------- */
+.eyebrow{
+  font-family:var(--sans);font-size:.72rem;font-weight:600;letter-spacing:.28em;
+  text-transform:uppercase;color:var(--brass-lite);margin-bottom:1.6rem;
+  display:flex;align-items:center;gap:.9rem;
+}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--brass)}
+h1{font-family:var(--serif);font-weight:500;line-height:1.04;letter-spacing:-.015em}
+h2{font-family:var(--serif);font-weight:500;line-height:1.08;letter-spacing:-.01em;font-size:clamp(2rem,4.4vw,3.4rem)}
+.lead{font-size:clamp(1rem,1.5vw,1.28rem);line-height:1.6;color:var(--cream-dim);max-width:44ch;font-weight:300}
+.lead strong{color:var(--cream);font-weight:500}
+.brass{color:var(--brass-lite)}
+.serif{font-family:var(--serif)}
+
+/* reveal children */
+.r{opacity:0;transform:translateY(18px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.active .r{opacity:1;transform:none}
+.active .r1{transition-delay:.15s}.active .r2{transition-delay:.3s}
+.active .r3{transition-delay:.45s}.active .r4{transition-delay:.6s}
+.active .r5{transition-delay:.75s}.active .r6{transition-delay:.9s}
+
+/* ---------- cover ---------- */
+.cover{align-items:center;text-align:center;justify-content:center}
+.cover .mark{font-family:var(--serif);font-weight:900;font-size:clamp(2.6rem,7vw,5.5rem);letter-spacing:.02em;color:var(--cream)}
+.cover .amp{color:var(--brass-lite);font-style:italic}
+.cover .sub{font-size:clamp(.95rem,1.6vw,1.2rem);letter-spacing:.24em;text-transform:uppercase;color:var(--brass-lite);font-weight:500;margin-top:1.4rem}
+.cover .titles{margin-top:2.6rem;font-family:var(--serif);font-size:clamp(1.1rem,2vw,1.5rem);color:var(--cream-dim);line-height:1.7;font-weight:400}
+.cover .rule{width:40px;height:1px;background:var(--brass);margin:2.4rem auto}
+.cover .foot{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-faint)}
+
+/* ---------- generic layout ---------- */
+.grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:5vw;align-items:center}
+.stack>*+*{margin-top:1.5rem}
+
+/* big stat */
+.bigstat{font-family:var(--serif);font-weight:500;font-size:clamp(3.2rem,8vw,6.5rem);line-height:.9;color:var(--cream);letter-spacing:-.02em}
+.bigstat .unit{font-size:.4em;color:var(--brass-lite);vertical-align:.15em}
+.statlabel{font-size:.85rem;letter-spacing:.04em;color:var(--cream-dim);margin-top:.7rem;max-width:30ch;line-height:1.5}
+
+.compare{display:flex;gap:0;align-items:stretch;margin-top:.5rem}
+.compare .c{flex:1;padding:1.4rem 1.6rem;border:1px solid var(--line)}
+.compare .c+.c{border-left:none}
+.compare .c .n{font-family:var(--serif);font-size:clamp(1.8rem,3.6vw,2.8rem);line-height:1}
+.compare .c .l{font-size:.74rem;letter-spacing:.04em;color:var(--cream-dim);margin-top:.5rem;text-transform:uppercase}
+.compare .c.win{background:var(--ink2);border-color:rgba(156,122,60,.4)}
+.compare .c.win .n{color:var(--brass-lite)}
+
+/* lists */
+.moves{list-style:none}
+.moves li{padding:1.15rem 0;border-top:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:1.3rem;align-items:baseline}
+.moves li:last-child{border-bottom:1px solid var(--line)}
+.moves .k{font-family:var(--serif);font-size:1.15rem;color:var(--brass-lite);font-weight:600}
+.moves .t{font-size:.98rem;line-height:1.5;color:var(--cream-dim)}
+.moves .t b{color:var(--cream);font-weight:600}
+
+/* pareto bar */
+.pareto{display:flex;height:64px;border-radius:4px;overflow:hidden;margin:1.6rem 0 1rem;border:1px solid var(--line)}
+.pareto .seg{display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;letter-spacing:.02em;position:relative;transform-origin:left;transform:scaleX(0);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.active .pareto .seg{transform:scaleX(1)}
+.active .pareto .b{transition-delay:.25s}.active .pareto .c{transition-delay:.4s}
+.pareto .a{background:linear-gradient(135deg,var(--brass),var(--brass-lite));color:var(--ink);flex:0 0 80%}
+.pareto .b{background:var(--ink3);color:var(--cream-dim);flex:0 0 15%}
+.pareto .c{background:var(--ink2);flex:0 0 5%}
+.pareto-legend{display:flex;gap:2.2rem;margin:-.3rem 0 .5rem}
+.pareto-legend .lg{display:flex;align-items:baseline;gap:.55rem;font-size:.82rem}
+.pareto-legend .sw{width:11px;height:11px;border-radius:2px;flex:none;position:relative;top:1px}
+.pareto-legend .sw.a{background:var(--brass-lite)}
+.pareto-legend .sw.b{background:var(--ink3);border:1px solid var(--line)}
+.pareto-legend .sw.c{background:var(--ink2);border:1px solid var(--line)}
+.pareto-legend .nm{color:var(--cream);font-weight:600}
+.pareto-legend .dt{color:var(--cream-dim)}
+
+/* timeline */
+.timeline{position:relative;margin-top:2rem;padding-left:0}
+.tl-track{position:absolute;left:0;right:0;top:18px;height:1px;background:var(--line)}
+.tl-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;position:relative}
+.tl-node{text-align:center;position:relative}
+.tl-dot{width:14px;height:14px;border-radius:50%;background:var(--ink);border:2px solid var(--brass);margin:11px auto .9rem;position:relative;z-index:2;transition:transform .4s ease,background .4s ease}
+.tl-node.peak .tl-dot{background:var(--brass-lite);box-shadow:0 0 0 5px var(--brass-glow)}
+.active .tl-dot{animation:pop .5s backwards}
+.tl-when{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-lite);font-weight:600}
+.tl-what{font-family:var(--serif);font-size:1rem;color:var(--cream);margin-top:.3rem;line-height:1.2}
+.tl-detail{font-size:.74rem;color:var(--cream-faint);margin-top:.35rem;line-height:1.35}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+
+/* state map / bars */
+.states{display:flex;flex-direction:column;gap:.55rem;margin-top:.5rem}
+.st{display:grid;grid-template-columns:90px 1fr auto;gap:1rem;align-items:center}
+.st .nm{font-size:.9rem;color:var(--cream)}
+.st .track{height:24px;background:var(--ink2);border-radius:2px;overflow:hidden;position:relative}
+.st .fill{height:100%;border-radius:2px;transform-origin:left;transform:scaleX(0);transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+.active .st .fill{transform:scaleX(1)}
+.st.core .fill{background:linear-gradient(90deg,var(--brass),var(--brass-lite))}
+.st.rocket .fill{background:linear-gradient(90deg,var(--green),#A8C9B0)}
+.st .meta{font-size:.76rem;color:var(--cream-dim);white-space:nowrap}
+.st .meta b{color:var(--cream)}
+.tag{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.2em .6em;border-radius:2px;font-weight:600}
+.tag.core{background:var(--brass-glow);color:var(--brass-lite)}
+.tag.rocket{background:rgba(127,168,138,.18);color:#A8C9B0}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:1.5rem}
+.road .yr{border-top:1px solid var(--brass);padding-top:1rem}
+.road .yr .y{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-lite);font-weight:600}
+.road .yr .v{font-family:var(--serif);font-size:clamp(1.8rem,3.6vw,2.7rem);margin:.3rem 0;color:var(--cream)}
+.road .yr .ph{font-size:.82rem;color:var(--cream-dim);line-height:1.4}
+
+/* synthesis */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:2.2rem;margin-top:2.4rem}
+.pillar .num{font-family:var(--serif);font-size:1rem;color:var(--brass-lite);font-weight:600;letter-spacing:.1em}
+.pillar h3{font-family:var(--serif);font-weight:500;font-size:1.3rem;margin:.7rem 0;color:var(--cream);line-height:1.2}
+.pillar p{font-size:.88rem;color:var(--cream-dim);line-height:1.55}
+
+.kicker{font-family:var(--serif);font-style:italic;font-size:clamp(1.3rem,2.6vw,2rem);color:var(--cream);line-height:1.35;max-width:30ch}
+.kicker .brass{font-style:normal}
+
+/* footnote */
+.fn{font-size:.7rem;color:var(--cream-faint);margin-top:1.6rem;line-height:1.4;max-width:52ch}
+
+/* ---------- chrome ---------- */
+.chrome{position:fixed;bottom:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 8vw;z-index:50;pointer-events:none}
+.chrome .id{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cream-faint)}
+.chrome .id b{color:var(--brass-lite);font-weight:600}
+.dots{display:flex;gap:8px;pointer-events:auto}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:background .3s,transform .3s}
+.dot.on{background:var(--brass-lite);transform:scale(1.3)}
+.dot:hover{background:var(--brass)}
+.nav{position:fixed;top:0;right:0;padding:3vh 8vw;z-index:50;display:flex;gap:.6rem;pointer-events:auto}
+.nav button{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--cream-dim);cursor:pointer;font-size:1rem;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.nav button:hover{border-color:var(--brass);color:var(--brass-lite)}
+.progress{position:fixed;top:0;left:0;height:2px;background:var(--brass-lite);z-index:60;transition:width .5s ease}
+
+.hint{position:fixed;bottom:62px;left:50%;transform:translateX(-50%);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-faint);z-index:40;opacity:1;transition:opacity 1s;pointer-events:none}
+.hint.gone{opacity:0}
+
+@media (max-width:780px){
+  .slide{padding:8vh 7vw}
+  .grid2{grid-template-columns:1fr;gap:2.2rem}
+  .pillars,.road{grid-template-columns:1fr;gap:1.4rem}
+  .tl-row{grid-template-columns:1fr;gap:.6rem}
+  .tl-track{display:none}
+  .tl-node{text-align:left;display:grid;grid-template-columns:auto 1fr;gap:1rem;align-items:center}
+  .tl-dot{margin:0}
+  .compare{flex-direction:column}
+  .compare .c+.c{border-left:1px solid var(--line);border-top:none}
+  .chrome .id{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .r{opacity:1;transform:none}
+  .st .fill{transform:scaleX(1)}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- 1 · COVER -->
+<section class="slide cover active">
+  <div class="r r1 mark">EIGHT <span class="amp">&</span> BOB</div>
+  <div class="r r2 sub">US Business Case</div>
+  <div class="r r3 rule"></div>
+  <div class="r r3 titles">
+    Stock & Replenishment Strategy — H2 2026<br>
+    US Expansion Strategy — 2026–2027
+  </div>
+  <div class="r r5" style="margin-top:3rem">
+    <div class="foot">A single, data-driven case</div>
+  </div>
+</section>
+
+<!-- 2 · STARTING POINT -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 1 · The starting point</div>
+  <div class="grid2">
+    <div class="stack">
+      <h2 class="r r2">The business is growing<br>three times faster<br>than planned.</h2>
+      <p class="lead r r3">The question is not <strong>whether</strong> to replenish — it is how to reach the year-end peak <strong>without stocking out or over-investing</strong>.</p>
+    </div>
+    <div class="stack">
+      <div class="r r3">
+        <div class="bigstat" data-count="150" data-prefix="+" data-suffix="%">+0%</div>
+        <div class="statlabel">H1 2026 commercial growth, year on year — against a company plan of <span class="brass">+45%</span>.</div>
+      </div>
+      <div class="r r4 compare" style="margin-top:2rem">
+        <div class="c"><div class="n">32<span style="font-size:.5em">%</span></div><div class="l">First half</div></div>
+        <div class="c win"><div class="n">68<span style="font-size:.5em">%</span></div><div class="l">Second half</div></div>
+      </div>
+      <p class="r r5" style="font-size:.82rem;color:var(--cream-dim);line-height:1.5;margin-top:1rem">November–December alone ≈ the entire first half. <span class="brass">One peak month weighs three normal ones.</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · TIER POLICY -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 1 · Tier policy</div>
+  <h2 class="r r2">Protect sixteen products,<br>and you protect the business.</h2>
+  <div class="r r3 pareto" style="margin-top:2.2rem">
+    <div class="seg a">16 products · 80% of revenue</div>
+    <div class="seg b"></div>
+    <div class="seg c"></div>
+  </div>
+  <div class="r r3 pareto-legend">
+    <span class="lg"><span class="sw a"></span><span class="nm">Tier A</span>&nbsp;<span class="dt">· 16 products · 80%</span></span>
+    <span class="lg"><span class="sw b"></span><span class="nm">Tier B</span>&nbsp;<span class="dt">· 12 · 15%</span></span>
+    <span class="lg"><span class="sw c"></span><span class="nm">Tier C</span>&nbsp;<span class="dt">· 41 · 5%</span></span>
+  </div>
+  <div class="grid2" style="margin-top:1rem">
+    <p class="lead r r4">Ranked by revenue, demand is sharply concentrated. <strong>Sixteen SKUs carry 80% of sales</strong> — mostly the Fouquet collection and the Original line.</p>
+    <ul class="moves r r5">
+      <li><span class="k">A</span><span class="t"><b>22–25% safety stock.</b> The core must be protected against stockouts.</span></li>
+      <li><span class="k">B</span><span class="t"><b>15% buffer.</b> Steady, watched.</span></li>
+      <li><span class="k">C</span><span class="t"><b>Minimal buffer.</b> Capital not tied up where rotation is low.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 4 · WAVE PLAN -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 1 · The replenishment plan</div>
+  <h2 class="r r2">Position the peak in advance —<br>don't replenish during it.</h2>
+  <div class="timeline r r3">
+    <div class="tl-track"></div>
+    <div class="tl-row">
+      <div class="tl-node"><div class="tl-dot"></div><div class="tl-when">Now</div><div class="tl-what">Air rescue</div><div class="tl-detail">10 critical SKUs · 911 units</div></div>
+      <div class="tl-node"><div class="tl-dot"></div><div class="tl-when">Jun–Jul</div><div class="tl-what">Sea base</div><div class="tl-detail">Cover summer & autumn</div></div>
+      <div class="tl-node peak"><div class="tl-dot"></div><div class="tl-when">Mid-Sep</div><div class="tl-what">Q4 order</div><div class="tl-detail">Committed on 9 months of real data</div></div>
+      <div class="tl-node"><div class="tl-dot"></div><div class="tl-when">Mid-Oct</div><div class="tl-what">Air valve</div><div class="tl-detail">Trigger-based top-up</div></div>
+      <div class="tl-node peak"><div class="tl-dot"></div><div class="tl-when">Nov–Dec</div><div class="tl-what">The peak</div><div class="tl-detail">Stock already in place</div></div>
+    </div>
+  </div>
+  <p class="lead r r5" style="margin-top:2.4rem;max-width:60ch">The big Q4 commitment waits until <strong>September</strong>, with nine months of real data in hand. The October air wave is the <span class="brass">adjustment valve</span> — ready to absorb any difference at marginal cost.</p>
+</section>
+
+<!-- 5 · FULFILLMENT -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 1 · Fulfilling B2B & B2C</div>
+  <h2 class="r r2">Two channels,<br>opposite dynamics.</h2>
+  <div class="grid2" style="margin-top:1.4rem">
+    <div class="stack">
+      <div class="r r3 compare">
+        <div class="c"><div class="n brass">Web</div><div class="l">35% rev · 85% margin</div></div>
+        <div class="c"><div class="n brass">B2B</div><div class="l">65% rev · 141 accounts</div></div>
+      </div>
+      <p class="lead r r4">Web is few units, high margin — a stockout is lost sales outright. B2B is the volume, spread across accounts that are <strong>not equal to one another</strong>.</p>
+    </div>
+    <ul class="moves r r5">
+      <li><span class="k">1</span><span class="t"><b>Contribution margin</b> — protect the most profitable demand.</span></li>
+      <li><span class="k">2</span><span class="t"><b>Strategic accounts</b> — 15 are the only client in their state.</span></li>
+      <li><span class="k">3</span><span class="t"><b>Customer experience</b> — protect the relationship.</span></li>
+      <li><span class="k">4</span><span class="t"><b>Historical sell-through</b> — let the long tail absorb shortfall.</span></li>
+    </ul>
+  </div>
+  <p class="fn r r6">Allocation hierarchy under scarcity. Promotional material is planned separately, at ~4 pieces per commercial unit.</p>
+</section>
+
+<!-- 6 · ECONOMIC CASE -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 1 · The economic case</div>
+  <div class="grid2">
+    <div class="stack">
+      <h2 class="r r2">Prevention is<br>cheap insurance.</h2>
+      <p class="lead r r3">A two-week stockout of the core during the peak would cost roughly <strong>29 times</strong> the entire prevention budget — and that excludes the brand damage, which in luxury is the larger cost.</p>
+      <p class="fn r r4">Total logistics plan: <span class="brass">3.1% of forecast H2 revenue</span>. Air freight is just ~$2,100 of it.</p>
+    </div>
+    <div class="stack">
+      <div class="r r3 compare" style="display:block">
+        <div class="c" style="border-bottom:none"><div class="n">~$4.7K</div><div class="l">Cost to prevent</div></div>
+        <div class="c win"><div class="n">~$136K</div><div class="l">Cost of one 2-week Q4 stockout</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · STATE MAP -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 2 · Where to compete</div>
+  <h2 class="r r2">Separate the channel<br>from the geography.</h2>
+  <div class="grid2" style="margin-top:1.2rem">
+    <div>
+      <div class="states">
+        <div class="st core"><span class="nm">Florida</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="meta"><b>$117K</b> · 26 · +124%</span></div>
+        <div class="st core"><span class="nm">California</span><div class="track"><div class="fill" style="width:67%"></div></div><span class="meta"><b>$78K</b> · 16 · +179%</span></div>
+        <div class="st core"><span class="nm">Texas</span><div class="track"><div class="fill" style="width:57%"></div></div><span class="meta"><b>$67K</b> · 13 · +84%</span></div>
+        <div class="st core"><span class="nm">Illinois</span><div class="track"><div class="fill" style="width:45%"></div></div><span class="meta"><b>$53K</b> · 5 · +42%</span></div>
+        <div class="st rocket"><span class="nm">New York</span><div class="track"><div class="fill" style="width:31%"></div></div><span class="meta"><b>$37K</b> · 8 · +281%</span></div>
+        <div class="st rocket"><span class="nm">Georgia</span><div class="track"><div class="fill" style="width:22%"></div></div><span class="meta"><b>$26K</b> · 4 · +480%</span></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.2rem">
+        <span class="tag core">Core · densify</span>
+        <span class="tag rocket">Rocket · capture</span>
+      </div>
+    </div>
+    <div class="stack">
+      <p class="lead r r4">The physical expansion map is read on retail demand alone — the national <strong>Web USA</strong> channel is treated separately, as a high-margin engine in its own right, not as demand for any one state.</p>
+      <p class="r r5" style="font-size:.9rem;color:var(--cream-dim);line-height:1.55">Florida is the model: diversified density. New York and Georgia are the <span class="brass">growth rockets</span> — explosive on a small base.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · THE APPROACH -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 2 · The approach</div>
+  <h2 class="r r2">Secure the base<br>to finance the offensive.</h2>
+  <ul class="moves r r3" style="margin-top:1.8rem">
+    <li><span class="k">Densify</span><span class="t"><b>The healthy core — Florida, California, Texas, Illinois.</b> Replicate proven, diversified density.</span></li>
+    <li><span class="k">Capture</span><span class="t"><b>The rockets — New York, Georgia.</b> Lean into explosive growth, channelled through select niche retailers.</span></li>
+    <li><span class="k">Deepen</span><span class="t"><b>Existing accounts first.</b> Several priority states already have one of their leading niche retailers as a client. Reactivate dormant accounts before chasing new doors.</span></li>
+  </ul>
+  <p class="lead r r5" style="margin-top:1.8rem;max-width:62ch">All three run <strong>in parallel, from now</strong> — calibrated by <span class="brass">tiers</span> (how much each market deserves) and <span class="brass">phases</span> (how fast to scale, as evidence accumulates).</p>
+</section>
+
+<!-- 9 · COLLECTIONS + EXPANSION -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 2 · What to push, how to grow</div>
+  <div class="grid2">
+    <div class="stack">
+      <h2 class="r r2">Fouquet is<br>the locomotive.</h2>
+      <div class="r r3">
+        <div class="bigstat" style="font-size:clamp(2.6rem,6vw,4.5rem)">59<span class="unit">% of revenue</span></div>
+        <div class="statlabel">Fouquet leads and grows fastest (~+98% consolidated). The Original is the base (~25%); Les Extraits an active premium-margin push.</div>
+      </div>
+    </div>
+    <ul class="moves r r4">
+      <li><span class="k">A</span><span class="t"><b>Art Basel Miami.</b> Leverage via OSME in Wynwood — reinforced Q4 stock, marginal cost.</span></li>
+      <li><span class="k">B</span><span class="t"><b>Polo Hamptons.</b> Account-hosted gifting in the NY rocket market.</span></li>
+      <li><span class="k">·</span><span class="t">Light, low-cost presence — <b>not</b> large activations. Climb the cost ladder only where ROI is proven.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 10 · ROADMAP -->
+<section class="slide">
+  <div class="r r1 eyebrow">Exercise 2 · The roadmap</div>
+  <h2 class="r r2">Calibrated growth,<br>not a round-number target.</h2>
+  <div class="road r r3">
+    <div class="yr"><div class="y">2026 · Secure</div><div class="v">$2.1M</div><div class="ph">Fix the base, capture momentum</div></div>
+    <div class="yr"><div class="y">2027 · Consolidate</div><div class="v">$2.9M</div><div class="ph">Turn momentum into structure</div></div>
+    <div class="yr"><div class="y">2028 · Scale</div><div class="v">$3.7M</div><div class="ph">Replicate the proven model</div></div>
+  </div>
+  <p class="lead r r4" style="margin-top:2rem;max-width:62ch">Each phase finances the next. Growth decelerates as the base matures — <strong>aggressive, but with financial control</strong>. The web channel runs underneath as the national margin engine.</p>
+  <p class="fn r r5">Base case. Projections are total US commercial revenue; the physical-state ranking excludes Web USA for market-ranking only.</p>
+</section>
+
+<!-- 11 · SYNTHESIS -->
+<section class="slide">
+  <div class="r r1 eyebrow">In closing</div>
+  <h2 class="r r2">One coherent case.</h2>
+  <div class="pillars">
+    <div class="pillar r r3"><div class="num">I</div><h3>Protect the core</h3><p>Sixteen products carry the business through the peak. Position stock in advance; decide the big order on real data.</p></div>
+    <div class="pillar r r4"><div class="num">II</div><h3>Separate the channels</h3><p>Web is a national margin engine, not a state. Geography and channel each get the strategy they deserve.</p></div>
+    <div class="pillar r r5"><div class="num">III</div><h3>Scale on evidence</h3><p>Capture exceptional growth where the data supports it — calibrated by tier and phase, financed by a secured base.</p></div>
+  </div>
+  <p class="kicker r r6" style="margin-top:2.8rem">Capture the boom — <span class="brass">without betting blind.</span></p>
+</section>
+
+</div>
+
+<!-- chrome -->
+<div class="nav">
+  <button id="prev" aria-label="Previous">‹</button>
+  <button id="next" aria-label="Next">›</button>
+</div>
+<div class="chrome">
+  <div class="id">Eight <b>&</b> Bob · US Business Case</div>
+  <div class="dots" id="dots"></div>
+</div>
+<div class="hint" id="hint">Use ← → or space</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const dotsWrap=document.getElementById('dots');
+const progress=document.getElementById('progress');
+const hint=document.getElementById('hint');
+let i=0,done=false;
+
+slides.forEach((s,n)=>{
+  const b=document.createElement('button');
+  b.className='dot'+(n===0?' on':'');
+  b.setAttribute('aria-label','Slide '+(n+1));
+  b.onclick=()=>go(n);
+  dotsWrap.appendChild(b);
+});
+const dots=[...document.querySelectorAll('.dot')];
+
+function go(n){
+  if(n<0||n>=slides.length)return;
+  slides[i].classList.remove('active');
+  slides[i].classList.toggle('prev',n>i);
+  dots[i].classList.remove('on');
+  i=n;
+  slides[i].classList.add('active');
+  slides[i].classList.remove('prev');
+  dots[i].classList.add('on');
+  progress.style.width=((i)/(slides.length-1)*100)+'%';
+  runCounters(slides[i]);
+  if(!done){hint.classList.add('gone');done=true;}
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+
+document.getElementById('next').onclick=next;
+document.getElementById('prev').onclick=prev;
+addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next()}
+  if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}
+  if(e.key==='Home')go(0); if(e.key==='End')go(slides.length-1);
+});
+// swipe
+let x0=null;
+addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50){dx<0?next():prev()}x0=null},{passive:true});
+
+// count-up
+function runCounters(slide){
+  slide.querySelectorAll('[data-count]').forEach(el=>{
+    if(el.dataset.ran)return; el.dataset.ran='1';
+    const target=+el.dataset.count, pre=el.dataset.prefix||'', suf=el.dataset.suffix||'';
+    const dur=1100, t0=performance.now();
+    function tick(t){
+      const p=Math.min((t-t0)/dur,1);
+      const e=1-Math.pow(1-p,3);
+      el.textContent=pre+Math.round(target*e)+suf;
+      if(p<1)requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+progress.style.width='0%';
+runCounters(slides[0]);
+</script>
+</body>
+</html>
