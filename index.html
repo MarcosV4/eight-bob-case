@@ -131,14 +131,18 @@ h2{font-family:var(--serif);font-weight:500;line-height:1.08;letter-spacing:-.01
 
 /* state map / bars */
 .states{display:flex;flex-direction:column;gap:.55rem;margin-top:.5rem}
-.st{display:grid;grid-template-columns:90px 1fr auto;gap:1rem;align-items:center}
+.st{display:grid;grid-template-columns:90px 1fr 170px;gap:1rem;align-items:center}
 .st .nm{font-size:.9rem;color:var(--cream)}
-.st .track{height:24px;background:var(--ink2);border-radius:2px;overflow:hidden;position:relative}
+.st .track{height:24px;background:var(--ink2);border-radius:2px;overflow:hidden;position:relative;width:100%}
 .st .fill{height:100%;border-radius:2px;transform-origin:left;transform:scaleX(0);transition:transform 1s cubic-bezier(.2,.7,.2,1)}
 .active .st .fill{transform:scaleX(1)}
 .st.core .fill{background:linear-gradient(90deg,var(--brass),var(--brass-lite))}
 .st.rocket .fill{background:linear-gradient(90deg,var(--green),#A8C9B0)}
-.st .meta{font-size:.76rem;color:var(--cream-dim);white-space:nowrap}
+.st .meta{font-size:.76rem;color:var(--cream-dim);white-space:nowrap;padding-right:.4rem}
+/* slide 7: more separation between chart and explanatory text */
+.s7grid{grid-template-columns:1.15fr .85fr;gap:6vw}
+.s7grid .states{padding-right:1.5rem}
+.s7text{padding-left:1.5rem;border-left:1px solid var(--line)}
 .st .meta b{color:var(--cream)}
 .tag{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;padding:.2em .6em;border-radius:2px;font-weight:600}
 .tag.core{background:var(--brass-glow);color:var(--brass-lite)}
@@ -323,7 +327,7 @@ h2{font-family:var(--serif);font-weight:500;line-height:1.08;letter-spacing:-.01
 <section class="slide">
   <div class="r r1 eyebrow">Exercise 2 · Where to compete</div>
   <h2 class="r r2">Separate the channel<br>from the geography.</h2>
-  <div class="grid2" style="margin-top:1.2rem">
+  <div class="grid2 s7grid" style="margin-top:1.2rem">
     <div>
       <div class="states">
         <div class="st core"><span class="nm">Florida</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="meta"><b>$117K</b> · 26 · +124%</span></div>
@@ -333,12 +337,12 @@ h2{font-family:var(--serif);font-weight:500;line-height:1.08;letter-spacing:-.01
         <div class="st rocket"><span class="nm">New York</span><div class="track"><div class="fill" style="width:31%"></div></div><span class="meta"><b>$37K</b> · 8 · +281%</span></div>
         <div class="st rocket"><span class="nm">Georgia</span><div class="track"><div class="fill" style="width:22%"></div></div><span class="meta"><b>$26K</b> · 4 · +480%</span></div>
       </div>
-      <div style="display:flex;gap:1rem;margin-top:1.2rem">
+      <div style="display:flex;gap:1rem;margin-top:1.4rem">
         <span class="tag core">Core · densify</span>
         <span class="tag rocket">Rocket · capture</span>
       </div>
     </div>
-    <div class="stack">
+    <div class="stack s7text">
       <p class="lead r r4">The physical expansion map is read on retail demand alone — the national <strong>Web USA</strong> channel is treated separately, as a high-margin engine in its own right, not as demand for any one state.</p>
       <p class="r r5" style="font-size:.9rem;color:var(--cream-dim);line-height:1.55">Florida is the model: diversified density. New York and Georgia are the <span class="brass">growth rockets</span> — explosive on a small base.</p>
     </div>
